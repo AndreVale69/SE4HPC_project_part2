@@ -4,10 +4,11 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1
       - name: try
         run: |
-          sudo apt install build-essential cmake
-          cmake -S .. -B build
+          cmake -S . -B build
           cmake --build build
           cd build && ctest
 
