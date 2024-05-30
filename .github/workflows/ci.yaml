@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: first
         run: |
-          cmake -S . -B build
+          cmake .
       - name: second
         run: |
           cmake --build build
