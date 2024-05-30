@@ -1,23 +1,13 @@
-on:
-  push:
-    branches: [ main ]
-
+name: Automating the test
+on: [push]
 jobs:
-  checkout-and-check-formatting:
+  run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Run tests
-        shell: cmake -P {0}
+      - name: try
         run: |
-          include(ProcessorCount)
-          ProcessorCount(N)
-  
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/ctest -j ${N}
-            WORKING_DIRECTORY build
-            RESULT_VARIABLE result
-          )
-          if (NOT result EQUAL 0)
-            message(FATAL_ERROR "Running tests failed!")
-          endif()
+          mkdir build
+          cmake -S . -B build
+          cmake --build build
+          cd build && ctest
+
