@@ -1,5 +1,5 @@
-#include "matrix_multiplication.h"
-#include <mpi.h>
+#include "../include/matrix_multiplication.h"
+#include <mpi/mpi.h>
 #include <iostream>
 #include <fstream>
 #include <vector>

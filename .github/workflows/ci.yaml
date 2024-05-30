@@ -1,0 +1,11 @@
+name: Automating the test
+on: [push]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: try
+        run: |
+          cmake -S . -B build
+          cmake --build build
+          cd build && ctest

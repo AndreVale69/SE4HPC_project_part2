@@ -1,4 +1,4 @@
-#include "matrix_multiplication.h"
+#include "../include/matrix_multiplication.h"
 #include <iostream>
 #include <vector>
 #include <gtest/gtest.h>
