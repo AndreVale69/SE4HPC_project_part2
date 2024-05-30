@@ -8,16 +8,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-#      - name: Setup CMake
-#        uses: jwlawson/actions-setup-cmake@v1
       - name: try
         run: |
           sudo apt install mpich
-          rm -rf googletest
-          wget https://github.com/google/googletest/archive/305e5a238b3c8d11266fbafd85520fb6b3184851.zip -O google.zip
-          unzip google.zip
-          rm google.zip
-          mv googletest-305e5a238b3c8d11266fbafd85520fb6b3184851/ googletest/
+#          rm -rf googletest
+#          wget https://github.com/google/googletest/archive/305e5a238b3c8d11266fbafd85520fb6b3184851.zip -O google.zip
+#          unzip google.zip
+#          rm google.zip
+#          mv googletest-305e5a238b3c8d11266fbafd85520fb6b3184851/ googletest/
           cmake -S . -B build
           cmake --build build
           cd build && ctest

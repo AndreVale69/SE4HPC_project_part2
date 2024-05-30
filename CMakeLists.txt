@@ -9,8 +9,13 @@ include_directories(${MPI_INCLUDE_PATH})
 include_directories(include)
 
 
-add_subdirectory(googletest)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/305e5a238b3c8d11266fbafd85520fb6b3184851.zip
+)
+#add_subdirectory(googletest)
+#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 # non aggiungo matrix_mult che non serve
 set(SOURCES src/main.cpp)
