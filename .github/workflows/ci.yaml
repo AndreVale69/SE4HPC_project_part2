@@ -4,8 +4,12 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - name: try
+      - name: first
         run: |
           cmake -S . -B build
+      - name: second
+        run: |
           cmake --build build
+      - name: third
+        run: |
           cd build && ctest
