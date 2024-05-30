@@ -1,17 +1,19 @@
 name: Automating the test
-on: [push]
+on: [push, pull_request] # pull_request really necessary?
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      # doc: https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: try
+      - name: Install MPICH
+        run: sudo apt install mpich
+      # doc: https://google.github.io/googletest/quickstart-cmake.html#create-and-run-a-binary
+      - name: Build and run the tests
         run: |
-          sudo apt install mpich
           cmake -S . -B build
           cmake --build build
           cd build && ctest
-
