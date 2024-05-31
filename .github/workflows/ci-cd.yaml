@@ -1,4 +1,4 @@
-name: Automating the test
+name: Building and Testing
 
 on: [push, pull_request] # pull_request really necessary?
 
