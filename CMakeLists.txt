@@ -16,7 +16,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 #add_subdirectory(googletest)
-#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 # non aggiungo matrix_mult che non serve
 set(SOURCES src/main.cpp)
