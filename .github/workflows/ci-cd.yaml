@@ -36,6 +36,10 @@ jobs:
         uses: actions/setup-go@v5.0.1
         with:
           go-version: '1.21.10'
+          check-latest: true
+          cache-dependency-path: |
+                subdir/go.sum
+                tools/go.sum
         id: go
       
       # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-dependencies
@@ -45,7 +49,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y autoconf automake cryptsetup fuse fuse2fs git libfuse-dev libglib2.0-dev libseccomp-dev libtool pkg-config runc squashfs-tools squashfs-tools-ng uidmap wget zlib1g-dev
 
-      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#download-singularityce-from-a-release
+      # OFFICIAL repository commands:
+      # https://github.com/singularityhub/github-ci/blob/ef8bdf31b2db109a6147824a53de11a36ace22b6/.github/workflows/native-install.yml#L63
       - name: Download and Compile Singularity (4.1.3)
         env:
           SINGULARITY_VERSION: 4.1.3
@@ -62,13 +67,6 @@ jobs:
           ./mconfig -p /usr/local && \
           make -C builddir && \
           sudo make -C builddir install
-
-      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#compile-singularity
-      #- name: Compile Singularity
-        #run: |
-          #./mconfig && \
-            #make -C ./builddir && \
-            #sudo make -C ./builddir install
 
       - name: Create the container
         run: sudo singularity build test-matrix-multiplication.sif singularity.def
