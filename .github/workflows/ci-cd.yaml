@@ -93,30 +93,36 @@ jobs:
       - name: Performs tests on the container
         run: ./test-matrix-multiplication.sif
       
-      - name: Save the container SIF
-        uses: actions/upload-artifact@v4.3.3
-        with:
-          name: test_matrix_multiplication-artifact
-          path: ./test-matrix-multiplication.sif
-          if-no-files-found: error
-          retention-days: 5
-          compression-level: 0
-          overwrite: true
+      - name: Try to send the SIF container to the cluster
+        run: |
+          scp ./job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+          yes
+          ${{ secrets.CLUSTER_PSW }}
 
-  exec-on-cluster:
-    needs: singularity
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Download the container SIF
-        uses: actions/download-artifact@v4.1.7
-        with:
-          name: test_matrix_multiplication-artifact
-          path: .
-
-      - name: Test of .sh script
-        run: bash job.sh
+      # - name: Save the container SIF
+        # uses: actions/upload-artifact@v4.3.3
+        # with:
+          # name: test_matrix_multiplication-artifact
+          # path: ./test-matrix-multiplication.sif
+          # if-no-files-found: error
+          # retention-days: 5
+          # compression-level: 0
+          # overwrite: true
+# 
+  # exec-on-cluster:
+    # needs: singularity
+    # runs-on: ubuntu-latest
+    # steps:
+      # - name: Checkout
+        # uses: actions/checkout@v4
+        # with:
+          # fetch-depth: 0
+# 
+      # - name: Download the container SIF
+        # uses: actions/download-artifact@v4.1.7
+        # with:
+          # name: test_matrix_multiplication-artifact
+          # path: .
+# 
+      # - name: Test of .sh script
+        # run: bash job.sh
