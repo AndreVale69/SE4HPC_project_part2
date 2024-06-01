@@ -38,6 +38,8 @@ jobs:
       - name: Import GoogleTest
         run: git submodule update --init --recursive
 
+      # https://github.com/marketplace/actions/cache#skipping-steps-based-on-cache-hit
+      # https://github.com/actions/cache/blob/main/examples.md#linux-1
       - name: Check Go in the cache
         uses: actions/cache@v4.0.2
         id: go_cache
@@ -54,6 +56,9 @@ jobs:
         uses: actions/setup-go@v5.0.1
         with:
           go-version: '1.21.10'
+          cache-dependency-path: |
+             subdir/go.sum
+             tools/go.sum
         id: go
       
       # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-dependencies
