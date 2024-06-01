@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: debian:bookworm-slim
+
+%files
+    ./include /container-prj/include
+    ./lib /container-prj/lib
+    ./src /container-prj/src
+    ./test /container-prj/test
+    CMakeLists.txt /container-prj/CMakeLists.txt
+    matrixA.txt /container-prj/matrixA.txt
+    matrixB.txt /container-prj/matrixB.txt
+
+%post
+    apt-get update && 
+    apt-get upgrade -y && 
+    apt-get autoremove -y &&
+    apt-get clean -y &&
+    apt-get -y install g++ cmake mpich &&
+    apt-get autoremove -y &&
+    apt-get clean -y
+
+%runscript
+    cmake -DCMAKE_POLICY_DEFAULT_CMP0135=NEW -S . -B build
+    cmake --build build
+    cd build 
+    ctest --rerun-failed --output-on-failure
