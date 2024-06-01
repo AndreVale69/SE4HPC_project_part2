@@ -98,8 +98,7 @@ jobs:
         with:
           name: test_matrix_multiplication-artifact
           path: ./test-matrix-multiplication.sif
-          if-no-files-found:
-            error: Cannot upload the container
+          if-no-files-found: error
             retention-days: 5
             compression-level: 0
             overwrite: true
