@@ -92,3 +92,26 @@ jobs:
 
       - name: Performs tests on the container
         run: ./test-matrix-multiplication.sif
+      
+      - name: Save the container SIF
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: test_matrix_multiplication-artifact
+          path: ./test-matrix-multiplication.sif
+          if-no-files-found:
+            error: Cannot upload the container
+            retention-days: 5
+            compression-level: 0
+            overwrite: true
+
+
+
+  
+  # exec-on-cluster:
+    # needs: singularity
+    # runs-on: ubuntu-latest
+    # steps:
+      # - name: Checkout
+        # uses: actions/checkout@v4
+        # with:
+          # fetch-depth: 0
