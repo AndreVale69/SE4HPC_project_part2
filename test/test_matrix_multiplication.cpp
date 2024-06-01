@@ -70,15 +70,106 @@ TEST(MatrixMultiplicationTest, ProfessorTestCase) {
 }
 
 /**
-To test the multiply between two matrixes, we create the following tests:
+To test the multiplication between two matrices, we create the following tests:
 - Zero Matrix Test
+    - Description: we assert that a matrix multiplied by another matrix 
+                   consisting only of zeros is always a zero matrix.
+    - Test suite: MatrixMultiplicationZeroMatricesTest
+    - Test cases:
+        ~ TestZeroMatrices2x3and3x2
+        ~ TestZeroMatrices3x2and2x3
+
 - Identity Matrix Test
+    - Description: we assert that a matrix multiplied by an identity matrix 
+                   is always the original matrix.
+    - Test suite: MatrixMultiplicationIdentityMatricesTest
+    - Test cases:
+        ~ TestIdentityMatrices2x2and2x3
+        ~ TestIdentityMatrices3x3and3x4
+        ~ TestIdentityMatrices2x3and3x3
+        ~ TestIdentityMatrices3x4and4x4
+        ~ TestIdentityAnd25SquareMatrices
+
 - Square Matrix Test
+    - Description: we test some multiplications between square matrices.
+    - Test suite: MatrixMultiplicationSquareMatricesTest
+    - Test cases:
+        ~ TestSquareZeroMatrices2x2         (A*B)
+        ~ TestSquareZeroMatrices2x2Reversed (B*A)
+        ~ TestSquareZeroMatrices3x3
+        ~ TestSquareZeroMatrices3x3Reversed
+        ~ TestSquareMatrices2x2
+        ~ TestSquareMatrices2x2Reversed
+        ~ TestSquareMatrices3x3
+        ~ TestSquareMatrices3x3Reversed
+        ~ TestSquareIdentityMatrices2x2
+        ~ TestSquareIdentityMatrices2x2Reversed
+        ~ TestSquareIdentityMatrices3x3
+        ~ TestSquareIdentityMatrices3x3Reversed
+
 - Vector Test
+    - Description: we test some multiplications between vectors and 
+                   between vectors and matrices.
+    - Test suite: MatrixMultiplicationVectorAndMatricesTest
+    - Test cases:
+        ~ TestVectors1x2and2x1
+        ~ TestVectors1x2and2x1Reversed
+        ~ TestVectors1x3and3x1
+        ~ TestVectors1x3and3x1Reversed
+        ~ TestVectorAndMatrices1x2and2x4
+        ~ TestVectorAndMatrices1x3and3x4
+
 - Single Element Matrix
+    - Description: we test some multiplications between a 1x1 matrix 
+                   and other matrices.
+    - Test suite: MatrixMultiplicationSingleElementMatricesTest
+    - Test cases:
+        ~ TestSingleElementOne
+        ~ TestSingleElementZero
+        ~ TestSingleElementAndVectors
+
 - Negative Numbers
+    - Description: we test some multiplications between negative matrices.
+    - Test suite: MatrixMultiplicationNegativeNumbersTest
+    - Test cases:
+        ~ TestNegativeSingleElementAndVectors
+        ~ TestNegativeSquareMatrixAndIdentityMatrix
+
 - Matrix Properties
+    - Description: we test some properties of the matrices. 
+                   Here we have only implemented non-commutativity.
+    - Test suite: MatrixMultiplicationPropertiesTest
+    - Test cases:
+        ~ TestNonCommutativity
+
 - High Values Test
+    - Description: we test a multiplication of high matrix order (10) 
+                   to ensure that there are no errors.
+    - Test suite: MatrixMultiplicationHighValuesTest
+    - Test cases:
+        ~ Test10x10Matrices
+
+
+
+Some notes: 
+- We use the multiplyMatricesWithoutErrors function to ensure that the results 
+  written to the tests are correct.
+
+- We have created the test with this logic: test the basic functions
+  of multiplication between matrices.
+  We believe that this is not a race to find the error code, 
+  but to test the function given in the exercise.
+
+- In each test case we've used the Arrange, Act, Assert pattern.
+
+- Any error code found is written in the comment of each TEST 
+  (in case you want to collapse the whole code for better readability, 
+   each collapsed function contains the comments).
+
+- We didn't want to split a test suite into different files 
+  (a common and useful practice) to avoid some problems with the guidelines.
+
+
 
 After these tests, we tracked each error code:
 - Error 1: Element-wise multiplication of ones detected!
@@ -965,7 +1056,7 @@ TEST(MatrixMultiplicationSquareMatricesTest, TestSquareIdentityMatrices3x3Revers
 /***************
  * Vector Test *
  ***************/
-TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x2and2x1) {
+TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectors1x2and2x1) {
     /**
      * Error 4: Matrix B contains the number 3!
      * Error 7: Result matrix contains a number between 11 and 20!
@@ -1003,7 +1094,7 @@ TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x2and2x1) 
 }
 
 
-TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x2and2x1Reversed) {
+TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectors1x2and2x1Reversed) {
     /**
      * Error 12: The number of rows in A is equal to the number of columns in B!
      * Error 14: The result matrix C has an even number of rows!
@@ -1042,7 +1133,7 @@ TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x2and2x1Re
 }
 
 
-TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x3and3x1) {
+TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectors1x3and3x1) {
     /**
      * Error 4: Matrix B contains the number 3!
      * Error 7: Result matrix contains a number between 11 and 20!
@@ -1082,7 +1173,7 @@ TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x3and3x1) 
 }
 
 
-TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x3and3x1Reversed) {
+TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectors1x3and3x1Reversed) {
     /**
      * Error 8: Result matrix contains zero!
      * Error 11: Every row in matrix B contains at least one '0'!
@@ -1165,12 +1256,11 @@ TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x2and2x4) 
 TEST(MatrixMultiplicationVectorAndMatricesTest, TestVectorAndMatrices1x3and3x4) {
     /**
      * Error 4: Matrix B contains the number 3!
-     * Error 14: The result matrix C has an even number of rows!
      * Error 16: Matrix B contains the number 6!
      * Error 20: Number of columns in matrix A is odd!
      * Expected equality of these values:
      * C
-     *      Which is: { { 50, 56 }, { 0, 0 } }
+     *      Which is: { { 2062, 56, 62, 68 } }
      * expected
      *      Which is: { { 50, 56, 62, 68 } }
      * Matrix multiplication test failed!
@@ -1287,7 +1377,6 @@ TEST(MatrixMultiplicationSingleElementMatricesTest, TestSingleElementZero) {
     // assert
     ASSERT_EQ(wrong_result, correct_result) << "Matrix multiplication test failed!";
 }
-
 
 
 TEST(MatrixMultiplicationSingleElementMatricesTest, TestSingleElementAndVectors) {
