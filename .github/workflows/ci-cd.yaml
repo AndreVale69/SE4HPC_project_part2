@@ -99,9 +99,9 @@ jobs:
           name: test_matrix_multiplication-artifact
           path: ./test-matrix-multiplication.sif
           if-no-files-found: error
-            retention-days: 5
-            compression-level: 0
-            overwrite: true
+          retention-days: 5
+          compression-level: 0
+          overwrite: true
 
 
 
