@@ -20,7 +20,7 @@ From: debian:bookworm-slim
     apt-get clean -y
 
 %runscript
-    cmake -DCMAKE_POLICY_DEFAULT_CMP0135=NEW -S . -B build
+    cmake -S . -B build
     cmake --build build
     cd build 
     ctest --rerun-failed --output-on-failure
