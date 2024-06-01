@@ -1,0 +1,1 @@
+./test-matrix-multiplication.sif > output.txt 2> errors.txt

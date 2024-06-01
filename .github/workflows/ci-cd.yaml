@@ -103,14 +103,20 @@ jobs:
           compression-level: 0
           overwrite: true
 
+  exec-on-cluster:
+    needs: singularity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      - name: Download the container SIF
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: test_matrix_multiplication-artifact
+          path: .
 
-  
-  # exec-on-cluster:
-    # needs: singularity
-    # runs-on: ubuntu-latest
-    # steps:
-      # - name: Checkout
-        # uses: actions/checkout@v4
-        # with:
-          # fetch-depth: 0
+      - name: Test of .sh script
+        run: bash job.sh
