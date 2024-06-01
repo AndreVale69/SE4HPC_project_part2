@@ -1,4 +1,4 @@
-name: Building and Testing
+name: Building, Testing and Singularity
 
 on: [push, pull_request] # pull_request really necessary?
 
@@ -22,3 +22,44 @@ jobs:
           cmake --build build
           cd build 
           ctest --rerun-failed --output-on-failure
+  
+  singularity:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-dependencies
+      - name: Install Dependencies 
+        run: |
+          cd
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake cryptsetup fuse fuse2fs git libfuse-dev libglib2.0-dev libseccomp-dev libtool pkg-config runc squashfs-tools squashfs-tools-ng uidmap wget zlib1g-dev
+
+      - uses: actions/setup-go@v5.0.1
+        with:
+          go-version: '1.21.10'
+
+      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#download-singularityce-from-a-release
+      - name: Download SingularityCE from the release 4.1.3
+        run: |
+          export VERSION=4.1.3 && \
+            wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-ce-${VERSION}.tar.gz && \
+            tar -xzf singularity-ce-${VERSION}.tar.gz && \
+            cd singularity-ce-${VERSION}
+
+      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#compile-singularity
+      - name: Compile Singularity
+        run: |
+          ./mconfig && \
+            make -C ./builddir && \
+            sudo make -C ./builddir install
+
+      - name: Create the container
+        run: sudo singularity build test-matrix-multiplication.sif singularity.def
+
+      - name: Performs tests on the container
+        run: ./test-matrix-multiplication.sif
