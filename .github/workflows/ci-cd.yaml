@@ -41,15 +41,16 @@ jobs:
       # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-go
       - name: Download Go
         run: |
-          # Install Go
           export VERSION=1.21.10 OS=linux ARCH=amd64
-          wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz
+          wget -q https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz
 
       - name: Extract Go
+        run: |
           sudo tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz
           rm go$VERSION.$OS-$ARCH.tar.gz
 
       - name: Set up environment for Go
+        run: |
           echo 'export GOPATH=${HOME}/go' >> ~/.bashrc
           echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc
           source ~/.bashrc
