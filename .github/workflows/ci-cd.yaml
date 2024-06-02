@@ -110,7 +110,7 @@ jobs:
           sudo apt install sshpass && \
           sudo apt install sshfs -y && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
-          sshfs ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. job.sh -o IdentityFile=$SSH_KEY_PATH
+          sshfs ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. src/ -o IdentityFile=$SSH_KEY_PATH
 # sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
 # sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 
