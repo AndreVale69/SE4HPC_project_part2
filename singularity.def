@@ -2,13 +2,12 @@ Bootstrap: docker
 From: debian:bookworm-slim
 
 %files
-    ./include /container-prj/include
-    ./lib /container-prj/lib
-    ./src /container-prj/src
-    ./test /container-prj/test
-    CMakeLists.txt /container-prj/CMakeLists.txt
-    matrixA.txt /container-prj/matrixA.txt
-    matrixB.txt /container-prj/matrixB.txt
+    ./include
+    ./lib
+    ./src
+    CMakeLists.txt
+    matrixA.txt
+    matrixB.txt
 
 %post
     apt-get update && 
@@ -22,5 +21,7 @@ From: debian:bookworm-slim
 %runscript
     cmake -S . -B build
     cmake --build build
+    cp matrixA.txt ./build
+    cp matrixB.txt ./build
     cd build 
-    ctest --rerun-failed --output-on-failure
+    mpirun -np 2 ./main

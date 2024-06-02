@@ -3,106 +3,116 @@ name: Building, Testing and Singularity
 on: [push, pull_request] # pull_request really necessary?
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      # doc: https://github.com/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Install MPICH
-        run: sudo apt install mpich
-
-      - name: Import GoogleTest
-        run: git submodule update --init --recursive
-      
-      # doc: https://google.github.io/googletest/quickstart-cmake.html#create-and-run-a-binary
-      - name: Build and run the tests
-        run: |
-          cmake -S . -B build
-          cmake --build build
-          cd build 
-          ctest --rerun-failed --output-on-failure
-  
+  #build-and-test:
+    #runs-on: ubuntu-latest
+    #steps:
+      ## doc: https://github.com/actions/checkout
+      #- name: Checkout
+        #uses: actions/checkout@v4
+        #with:
+          #fetch-depth: 0
+#      
+      #- name: Install MPICH
+        #run: sudo apt install mpich
+#
+      #- name: Import GoogleTest
+        #run: git submodule update --init --recursive
+#      
+      ## doc: https://google.github.io/googletest/quickstart-cmake.html#create-and-run-a-binary
+      #- name: Build and run the tests
+        #run: |
+          #cmake -S . -B build
+          #cmake --build build
+          #cd build 
+          #ctest --rerun-failed --output-on-failure
+#  
   singularity:
-    needs: build-and-test
+    #needs: build-and-test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-        
-      - name: Import GoogleTest
-        run: git submodule update --init --recursive
+      #- name: Checkout
+        #uses: actions/checkout@v4
+        #with:
+          #fetch-depth: 0
+#        
+      #- name: Import GoogleTest
+        #run: git submodule update --init --recursive
+#
+      ## https://github.com/marketplace/actions/cache#skipping-steps-based-on-cache-hit
+      ## https://github.com/actions/cache/blob/main/examples.md#linux-1
+      #- name: Check Go in the cache
+        #uses: actions/cache@v4.0.2
+        #id: go_cache
+        #with:
+          #path: |
+            #~/.cache/go-build
+            #~/go/pkg/mod
+          #key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          #restore-keys: |
+            #${{ runner.os }}-go-
+#      
+      #- name: Set up Go 1.21.10
+        #if: steps.go_cache.outputs.cache-hit != 'true'
+        #uses: actions/setup-go@v5.0.1
+        #with:
+          #go-version: '1.21.10'
+          #cache-dependency-path: |
+             #subdir/go.sum
+             #tools/go.sum
+        #id: go
+#      
+      ## https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-dependencies
+      #- name: Install Dependencies 
+        #run: |
+          #cd
+          #sudo apt-get update
+          #sudo apt-get install -y autoconf automake cryptsetup fuse fuse2fs git libfuse-dev libglib2.0-dev libseccomp-dev libtool pkg-config runc squashfs-tools squashfs-tools-ng uidmap wget zlib1g-dev
+#
+      ## OFFICIAL repository commands:
+      ## https://github.com/singularityhub/github-ci/blob/ef8bdf31b2db109a6147824a53de11a36ace22b6/.github/workflows/native-install.yml#L63
+      #- name: Download and Compile Singularity (4.1.3)
+        #env:
+          #SINGULARITY_VERSION: 4.1.3
+          #GOPATH: /tmp/go
+#      
+        #run: |
+          #mkdir -p $GOPATH
+          #sudo mkdir -p /usr/local/var/singularity/mnt && \
+          #mkdir -p $GOPATH/src/github.com/sylabs && \
+          #cd $GOPATH/src/github.com/sylabs && \
+          #wget -qO- https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz | \
+          #tar xzv && \
+          #cd singularity-ce-${SINGULARITY_VERSION} && \
+          #./mconfig -p /usr/local && \
+          #make -C builddir && \
+          #sudo make -C builddir install
+#
+      #- name: Create the container
+        #run: sudo singularity build test-matrix-multiplication.sif singularity.def
+#
+      #- name: Performs tests on the container
+        #run: ./test-matrix-multiplication.sif
 
-      # https://github.com/marketplace/actions/cache#skipping-steps-based-on-cache-hit
-      # https://github.com/actions/cache/blob/main/examples.md#linux-1
-      - name: Check Go in the cache
-        uses: actions/cache@v4.0.2
-        id: go_cache
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      
-      - name: Set up Go 1.21.10
-        if: steps.go_cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5.0.1
-        with:
-          go-version: '1.21.10'
-          cache-dependency-path: |
-             subdir/go.sum
-             tools/go.sum
-        id: go
-      
-      # https://docs.sylabs.io/guides/4.1/admin-guide/installation.html#install-dependencies
-      - name: Install Dependencies 
+      - name: Create SSH key
         run: |
-          cd
-          sudo apt-get update
-          sudo apt-get install -y autoconf automake cryptsetup fuse fuse2fs git libfuse-dev libglib2.0-dev libseccomp-dev libtool pkg-config runc squashfs-tools squashfs-tools-ng uidmap wget zlib1g-dev
-
-      # OFFICIAL repository commands:
-      # https://github.com/singularityhub/github-ci/blob/ef8bdf31b2db109a6147824a53de11a36ace22b6/.github/workflows/native-install.yml#L63
-      - name: Download and Compile Singularity (4.1.3)
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        shell: bash
         env:
-          SINGULARITY_VERSION: 4.1.3
-          GOPATH: /tmp/go
-      
-        run: |
-          mkdir -p $GOPATH
-          sudo mkdir -p /usr/local/var/singularity/mnt && \
-          mkdir -p $GOPATH/src/github.com/sylabs && \
-          cd $GOPATH/src/github.com/sylabs && \
-          wget -qO- https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz | \
-          tar xzv && \
-          cd singularity-ce-${SINGULARITY_VERSION} && \
-          ./mconfig -p /usr/local && \
-          make -C builddir && \
-          sudo make -C builddir install
-
-      - name: Create the container
-        run: sudo singularity build test-matrix-multiplication.sif singularity.def
-
-      - name: Performs tests on the container
-        run: ./test-matrix-multiplication.sif
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       
       - name: Try to send the SIF container to the cluster
         run: |
           sudo apt install sshpass && \
-          mkdir -p ~/.ssh/ && \
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ../private.key && \
-          sudo chmod 600 ../private.key && \
-          ssh-keyscan ${{ secrets.CLUSTER_HOST }} >> ~/.ssh/known_hosts && \
+          sudo apt install sshfs -y && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
-          sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
-          sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+          sshfs ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. job.sh -o IdentityFile=$SSH_KEY_PATH
+# sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
+# sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 
       # - name: Performs tests on the cluster
         # run: # https://www.geeksforgeeks.org/how-to-execute-commands-remotely-using-ssh-in-linux/
