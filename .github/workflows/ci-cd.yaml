@@ -30,10 +30,10 @@ jobs:
     #needs: build-and-test
     runs-on: ubuntu-latest
     steps:
-      #- name: Checkout
-        #uses: actions/checkout@v4
-        #with:
-          #fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 #        
       #- name: Import GoogleTest
         #run: git submodule update --init --recursive
