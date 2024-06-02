@@ -96,9 +96,13 @@ jobs:
       - name: Try to send the SIF container to the cluster
         run: |
           sudo apt install sshpass && \
+          ssh-keyscan login.g100.cineca.it >> ~/.ssh/known_hosts && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
           sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
           sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+
+      # - name: Performs tests on the cluster
+        # run: # https://www.geeksforgeeks.org/how-to-execute-commands-remotely-using-ssh-in-linux/
 
 
       # - name: Save the container SIF
