@@ -93,24 +93,24 @@ jobs:
       #- name: Performs tests on the container
         #run: ./test-matrix-multiplication.sif
 
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          ssh-keygen -t rsa -b 4096 -C "${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}" -q -N "" -f secret.key && cat secret.key > ../private.key
-          sudo chmod 600 ../private.key
-          cat secret.key.pub > ~/.ssh/id_rsa.pub
-          ssh-keyscan ${{ secrets.CLUSTER_HOST }} > ~/.ssh/known_hosts
-        shell: bash
-        env:
-          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+      #- name: Create SSH key
+        #run: |
+          #mkdir -p ~/.ssh/
+          #ssh-keygen -t rsa -b 4096 -C "${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}" -q -N "" -f secret.key && cat secret.key > ../private.key
+          #sudo chmod 600 ../private.key
+          #cat secret.key.pub > ~/.ssh/id_rsa.pub
+          #ssh-keyscan ${{ secrets.CLUSTER_HOST }} > ~/.ssh/known_hosts
+        #shell: bash
+        #env:
+          #SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          #SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          #SSH_KEY_PATH: ${{ github.workspace }}/../private.key
       
       - name: Try to send the SIF container to the cluster
         run: |
           sudo apt install sshpass && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
-          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i ${{ github.workspace }}/../private.key" job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 # sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i $SSH_KEY_PATH" -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 # sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
 # sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
