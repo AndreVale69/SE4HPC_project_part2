@@ -99,7 +99,7 @@ jobs:
           name: singularity-container
           path: matrix-multiplication.sif
 
-  upload-container-to-cluster:
+  upload-and-run-container-to-cluster:
     needs: singularity
     runs-on: ubuntu-latest
     steps:
@@ -107,6 +107,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Import GoogleTest
+        run: git submodule update --init --recursive
 
       - name: Download SIF container
         uses: actions/download-artifact@v4.1.7
@@ -116,7 +119,7 @@ jobs:
       - name: Prepare the zip file to send
         run: |
           sudo apt install zip && \
-          zip -9 -r SE4HPC_project_part2.zip include/ lib/ src/ CMakeLists.txt matrixA.txt matrixB.txt matrix-multiplication.sif
+          zip -9 -r SE4HPC_project_part2.zip include/ lib/ src/ googletest/ CMakeLists.txt matrixA.txt matrixB.txt matrix-multiplication.sif 
 
       - name: Send files to the cluster
         env:
@@ -127,6 +130,31 @@ jobs:
           sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" job.sh $CLUSTER_SSH:.
           sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" SE4HPC_project_part2.zip $CLUSTER_SSH:.
         # sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i $SSH_KEY_PATH" -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+
+      - name: Run job.sh on the cluster
+        env:
+          CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
+        run: sshpass -f ./psw.txt ssh $CLUSTER_SSH 'bash job.sh'
+
+      - name: Download results from the cluster
+        env:
+          CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
+        run: |
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:output.txt .
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:errors.txt .
+      
+      - name: Upload Output log
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: output
+          path: output.txt
+
+      - name: Upload Errors log
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: errors
+          path: errors.txt
+
 
       #- name: Create SSH key
         #run: |

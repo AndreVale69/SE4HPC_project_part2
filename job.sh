@@ -1,3 +1,3 @@
-# unzip ./test_matrix_multiplication-artifact.zip
+unzip SE4HPC_project_part2.zip
 
-./test-matrix-multiplication.sif > output.txt 2> errors.txt
+singularity run matrix-multiplication.sif > output.txt 2> errors.txt
