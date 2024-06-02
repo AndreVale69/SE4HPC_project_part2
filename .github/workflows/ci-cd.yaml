@@ -96,6 +96,7 @@ jobs:
       - name: Try to send the SIF container to the cluster
         run: |
           sudo apt install sshpass && \
+          mkdir -p ~/.ssh/ && \
           ssh-keyscan ${{ secrets.CLUSTER_HOST }} >> ~/.ssh/known_hosts && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
           sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
