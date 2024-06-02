@@ -95,9 +95,11 @@ jobs:
       
       - name: Try to send the SIF container to the cluster
         run: |
-          scp ./job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
-          yes
-          ${{ secrets.CLUSTER_PSW }}
+          sudo apt install sshpass && \
+          echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
+          sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
+          sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+
 
       # - name: Save the container SIF
         # uses: actions/upload-artifact@v4.3.3
