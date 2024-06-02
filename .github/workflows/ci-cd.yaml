@@ -163,8 +163,7 @@ jobs:
           #CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
         #run: sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'rm -rf *'
 
-
-
+      # TODO: eventually...
       #- name: Create SSH key
         #run: |
           #mkdir -p ~/.ssh/
@@ -177,13 +176,3 @@ jobs:
           #SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           #SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           #SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-
-      # - name: Save the container SIF
-        # uses: actions/upload-artifact@v4.3.3
-        # with:
-          # name: test_matrix_multiplication-artifact
-          # path: ./matrix-multiplication.sif
-          # if-no-files-found: error
-          # retention-days: 5
-          # compression-level: 0
-          # overwrite: true
