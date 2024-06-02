@@ -98,6 +98,9 @@ jobs:
         with:
           name: singularity-container
           path: matrix-multiplication.sif
+          if-no-files-found: error
+          compression-level: 9
+          overwrite: true
 
   upload-and-run-container-to-cluster:
     needs: singularity
@@ -119,7 +122,7 @@ jobs:
       - name: Prepare the zip file to send
         run: |
           sudo apt install zip && \
-          zip -9 -r SE4HPC_project_part2.zip include/ lib/ src/ googletest/ CMakeLists.txt matrixA.txt matrixB.txt matrix-multiplication.sif 
+          zip -9 -r SE4HPC_project_part2.zip include/ lib/ src/ test/ googletest/ CMakeLists.txt matrixA.txt matrixB.txt matrix-multiplication.sif 
 
       - name: Send files to the cluster
         env:
@@ -134,7 +137,7 @@ jobs:
       - name: Run job.sh on the cluster
         env:
           CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
-        run: sshpass -f ./psw.txt ssh $CLUSTER_SSH 'bash job.sh'
+        run: sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'bash job.sh'
 
       - name: Download results from the cluster
         env:
@@ -155,6 +158,12 @@ jobs:
           name: errors
           path: errors.txt
 
+      #- name: Clean cluster folder
+        #env:
+          #CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
+        #run: sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'rm -rf *'
+
+
 
       #- name: Create SSH key
         #run: |
@@ -168,18 +177,6 @@ jobs:
           #SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           #SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
           #SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-      
-      # - name: Try to send the SIF container to the cluster
-        # run: |
-          # sudo apt install -y sshpass && \
-          # echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
-          # sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
-          # sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" SE4HPC_project_part2.zip ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
-        # sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i $SSH_KEY_PATH" -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
-
-      # - name: Performs tests on the cluster
-        # run: # https://www.geeksforgeeks.org/how-to-execute-commands-remotely-using-ssh-in-linux/
-
 
       # - name: Save the container SIF
         # uses: actions/upload-artifact@v4.3.3
@@ -190,21 +187,3 @@ jobs:
           # retention-days: 5
           # compression-level: 0
           # overwrite: true
-# 
-  # exec-on-cluster:
-    # needs: singularity
-    # runs-on: ubuntu-latest
-    # steps:
-      # - name: Checkout
-        # uses: actions/checkout@v4
-        # with:
-          # fetch-depth: 0
-# 
-      # - name: Download the container SIF
-        # uses: actions/download-artifact@v4.1.7
-        # with:
-          # name: test_matrix_multiplication-artifact
-          # path: .
-# 
-      # - name: Test of .sh script
-        # run: bash job.sh
