@@ -94,10 +94,10 @@ jobs:
 
       # https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts#passing-data-between-jobs-in-a-workflow
       - name: Upload SIF container
-          uses: actions/upload-artifact@v4.3.3
-          with:
-            name: singularity-container
-            path: matrix-multiplication.sif
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: singularity-container
+          path: matrix-multiplication.sif
 
   upload-container-to-cluster:
     needs: singularity
