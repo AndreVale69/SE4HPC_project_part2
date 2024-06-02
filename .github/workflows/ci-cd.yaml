@@ -109,7 +109,8 @@ jobs:
         run: |
           sudo apt install sshpass && \
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt && \
-          sshpass -f ./psw.txt rsync -avz -e "ssh -i $SSH_KEY_PATH" -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i $SSH_KEY_PATH" job.sh a08trb0n@login.g100.cineca.it:.
+# sshpass -f ./psw.txt rsync -PravzHS -e "ssh -i $SSH_KEY_PATH" -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 # sshpass -f ./psw.txt rsync -PravzHS job.sh ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:. && \
 # sshpass -f ./psw.txt rsync -PravzHS test-matrix-multiplication.sif ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}:.
 
