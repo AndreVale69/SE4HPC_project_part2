@@ -19,9 +19,9 @@ From: debian:bookworm-slim
     apt-get clean -y
 
 %runscript
-    cmake -S . -B build
-    cmake --build build
-    cp matrixA.txt ./build
-    cp matrixB.txt ./build
-    cd build 
+    mkdir -p build && cd build
+    cmake ..
+    cmake --build .
+    cp ../matrixA.txt ./build
+    cp ../matrixB.txt ./build
     mpirun -np 2 ./main

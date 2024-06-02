@@ -87,7 +87,7 @@ jobs:
           sudo make -C builddir install
 
       - name: Create the singularity container from the def file
-        run: sudo singularity build matrix-multiplication.sif singularity.def
+        run: singularity build --fakeroot matrix-multiplication.sif singularity.def
 
       - name: Verify correct container execution
         run: ./matrix-multiplication.sif
