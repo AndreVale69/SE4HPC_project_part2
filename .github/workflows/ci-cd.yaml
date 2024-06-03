@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install MPICH
+      - name: Install libopenmpi-dev
         run: sudo apt install libopenmpi-dev
 
       - name: Import GoogleTest
@@ -149,8 +149,7 @@ jobs:
           CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
         run: |
           echo ${{ secrets.CLUSTER_PSW }} > psw.txt
-          sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'unzip -o SE4HPC_project_part2.zip'
-          sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'sbatch job.sh'
+          sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'unzip -o SE4HPC_project_part2.zip && rm SE4HPC_project_part2.zip && sbatch job.sh'
 
       - name: Wait for execution time and download results from cluster
         env:

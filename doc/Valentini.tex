@@ -1,0 +1,116 @@
+\documentclass[a4paper]{article}
+\usepackage[T1]{fontenc}			% \chapter package
+\usepackage[english]{babel}
+\usepackage[english]{isodate}  		% date format
+\usepackage{graphicx}				% manage images
+\usepackage{amsfonts}
+\usepackage{booktabs}				% high quality tables
+\usepackage{amsmath}				% math package
+\usepackage{amssymb}				% another math package (e.g. \nexists)
+\usepackage{bm}                     % bold math symbols
+\usepackage{mathtools}				% emphasize equations
+\usepackage{stmaryrd} 				% '\llbracket' and '\rrbracket'
+\usepackage{amsthm}					% better theorems
+\usepackage{enumitem}				% manage list
+\usepackage{pifont}					% nice itemize
+\usepackage{cancel}					% cancel math equations
+\usepackage{caption}				% custom caption
+\usepackage[]{mdframed}				% box text
+\usepackage{multirow}				% more lines in a table
+\usepackage{textcomp, gensymb}		% degree symbol
+\usepackage[x11names]{xcolor}		% RGB color
+\usepackage[many]{tcolorbox}		% colorful box
+\usepackage{multicol}				% more rows in a table (used for the lists)
+\usepackage{listings}
+\usepackage{url}
+\usepackage{qrcode}
+\usepackage{fontawesome5}
+\usepackage{ragged2e}
+\usepackage{cite}                   % references
+\usepackage{imakeidx}               % index
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+
+% table of content links
+\usepackage{xcolor}
+\usepackage[linkcolor=black, citecolor=blue, urlcolor=cyan]{hyperref} % hypertexnames=false
+\hypersetup{
+	colorlinks=true
+}
+
+
+\newcommand{\dquotes}[1]{``#1''}
+\newcommand{\highspace}{\vspace{1.2em}\noindent}
+
+
+\begin{document}
+    \noindent
+    Information:
+    \begin{itemize}
+        \item Andrea Valentini
+        \item ID: 260236
+        \item [\faIcon{github}] \href{https://github.com/AndreVale69/SE4HPC_project_part1}{SE4HPC\_project\_part1}
+        \item [\faIcon{github}] \href{https://github.com/AndreVale69/SE4HPC_project_part2}{SE4HPC\_project\_part2}
+        \item If the links are broken, this is my link to my GitHub profile (\href{https://github.com/AndreVale69}{GitHub AndreVale69}), the projects are in the repository list.
+    \end{itemize}
+    I was working alone because I'm a working student. But on Monday the 3rd I came to the lecture and with the great help of Simone Reale we solved a problem with the mpi on the Galileo100 cluster. I don't know if I was the first to finish the project or not, but as soon as I finished the project, I helped my colleagues.
+
+    \highspace
+    There are a few points in the following list that I would like to highlight:
+    \begin{itemize}
+        \item Part 1:
+        \begin{itemize}
+            \item I added some test cases to test the matrix multiplication in general and not with the aim to find the 20 errors. By the way, I found all 20 errors (check the comments in any function to find the errors it generates).
+            
+            \item I've created a CI/CD pipeline (optional requirement), but obviously the test doesn't pass and the result is an error.
+        \end{itemize}
+        
+        \item Part 2:
+        \begin{itemize}
+            \item The \texttt{singularity-alpine.def} file is an attempt to create a container using \href{https://alpinelinux.org/about/}{Alpine Linux}. The main reason is lightweight. Usually in production, if it's possible, it's a good choice to make a container very lightweight. The main problem is that open mpi is still under development, so it is not possible to run it on the cluster.
+            
+            \item The \texttt{singularity.def} file is the main singularity container and is used for the cluster. The chosen operating system is Debian slim, because it's weight is only 75 MB. As the \href{https://hub.docker.com/_/debian}{documentation} says:
+            \begin{center}
+                \emph{These tags are an experiment in providing a slimmer base (removing some extra files that are normally not necessary within containers, such as man pages and documentation), and are definitely subject to change.}
+
+                \emph{See the \texttt{debuerreotype-slimify} script (\texttt{debuerreotype} linked above) for more details about what gets removed during the \dquotes{slimification} process.}
+            \end{center}
+
+            \item The pipeline is divided into four main groups to take advantage of some interesting features of GitHub Actions, such as \textbf{GitHub Actions Cache}, \textbf{GitHub Marketplace actions}, \textbf{download/upload artifacts}:
+            \begin{enumerate}
+                \item \texttt{build-and-test}: Install the \texttt{libopenmpi-dev} library, import the submodule (\texttt{GoogleTest}), build the project and run the tests.
+
+                \item \texttt{singularity}: Import the submodule (\texttt{GoogleTest}), check if Go is cached, otherwise download it using the action from the marketplace \texttt{actions/setup-go@v5.0.1}. Then download the Singularity dependencies, download the release from the official repo and install it using \texttt{dpkg}. Finally, create the container from the def file and upload it to \texttt{actions/upload-artifact@v4.3.3}.
+                
+                \item \texttt{upload-container-to-cluster}: Download the SIF container from \texttt{actions/download-artifact@v4.1.7}. Then create a zip file containing the minimum required to run on the Galileo100 cluster. Finally, use \texttt{sshpass} and \texttt{rsync} to pass \texttt{job.sh} and the zip file to the cluster.
+                
+                \item \texttt{run-container-to-cluster}: Run the unzip and delete the zip when it is finished. Finally, run \texttt{sbatch job.sh} to run it on the cluster. At the end, download \texttt{output.log} and \texttt{errors.log} and upload them as artifacts.
+            \end{enumerate}
+            Note: they run sequentially (pipeline); if one of them breaks, the pipeline breaks and github actions return an error.
+        \end{itemize}
+    \end{itemize}
+\end{document}
