@@ -151,6 +151,7 @@ jobs:
         env:
           CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
         run: |
+          echo ${{ secrets.CLUSTER_PSW }} > psw.txt
           sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'unzip -o SE4HPC_project_part2.zip'
           sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'sbatch job.sh'
 
