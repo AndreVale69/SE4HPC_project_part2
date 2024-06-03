@@ -1,6 +1,11 @@
-name: Building, Testing and Singularity
+name: Building, Testing, Singularity container and Galileo100
 
 on: [push, pull_request] # pull_request really necessary?
+
+# Secrets used:
+#   - secrets.CLUSTER_USERNAME: username used in the cluster
+#   - secrets.CLUSTER_HOST: host used to connect to the cluster
+#   - secrets.CLUSTER_PSW: password used in the cluster
 
 jobs:
   build-and-test:
