@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install MPICH
-        run: sudo apt install mpich
+        run: sudo apt install libopenmpi-dev
 
       - name: Import GoogleTest
         run: git submodule update --init --recursive
