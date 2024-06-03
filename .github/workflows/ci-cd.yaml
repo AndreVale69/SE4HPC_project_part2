@@ -120,9 +120,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Import GoogleTest
-        run: git submodule update --init --recursive
-
       - name: Download SIF container
         uses: actions/download-artifact@v4.1.7
         with:
@@ -154,25 +151,25 @@ jobs:
           sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'unzip -o SE4HPC_project_part2.zip'
           sshpass -f ./psw.txt ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $CLUSTER_SSH 'sbatch job.sh'
 
-      - name: Download results from the cluster
+      - name: Wait for execution time and download results from cluster
         env:
           CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
         run: |
           sleep 30
-          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:output.out .
-          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:errors.err .
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:output.log .
+          sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:errors.log .
       
       - name: Upload Output log
         uses: actions/upload-artifact@v4.3.3
         with:
           name: output
-          path: output.out
+          path: output.log
 
       - name: Upload Errors log
         uses: actions/upload-artifact@v4.3.3
         with:
           name: errors
-          path: errors.err
+          path: errors.log
 
       #- name: Clean cluster folder
         #env:

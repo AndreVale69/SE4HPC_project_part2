@@ -4,8 +4,8 @@
 #SBATCH --time=00:30
 #SBATCH --ntasks=2
 #SBATCH --nodes=1
-#SBATCH -o output.out # File to which STDOUT will be written
-#SBATCH -e errors.err # File to which STDERR will be written
+#SBATCH -o output.log # File to which STDOUT will be written
+#SBATCH -e errors.log # File to which STDERR will be written
 
 module load singularity
 
