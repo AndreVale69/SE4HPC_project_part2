@@ -2,3 +2,6 @@ build/
 .idea/
 run.sh
 run-test.sh
+doc/*.*
+!doc/*.tex
+!doc/*.pdf
