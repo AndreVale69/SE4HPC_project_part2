@@ -5,6 +5,7 @@ From: alpine:3.20.0
     ./include /container-prj/include
     ./lib /container-prj/lib
     ./src /container-prj/src
+    ./googletest /container-prj/googletest
     ./test /container-prj/test
     CMakeLists.txt /container-prj/CMakeLists.txt
     matrixA.txt /container-prj/matrixA.txt
@@ -12,9 +13,12 @@ From: alpine:3.20.0
 
 %post
     apk update && apk add --no-cache g++ make cmake openmpi-dev
+    cd container-prj
+    mkdir -p build && cd build
+    cmake ..
+    cmake --build .
+    cp main ..
+    cd ..
 
 %runscript
-    cmake -S . -B build
-    cmake --build build
-    cd build 
-    ctest --rerun-failed --output-on-failure
+    mpirun -np 2 /container-prj/main
