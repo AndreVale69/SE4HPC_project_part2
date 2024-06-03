@@ -92,10 +92,10 @@ jobs:
           # sudo dpkg -i singularity-ce_4.1.3-jammy_amd64.deb
 
       - name: Create the singularity container from the def file
-        run: ./matrix-multiplication.sif
+        run: singularity build --fakeroot matrix-multiplication.sif singularity.def
 
       - name: Verify correct container execution
-        run: singularity exec matrix-multiplication.sif bash -c "mpirun -np 2 /prj/main"
+        run: ./matrix-multiplication.sif
 
       # https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts#passing-data-between-jobs-in-a-workflow
       - name: Upload SIF container
