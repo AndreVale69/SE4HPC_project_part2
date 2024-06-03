@@ -95,7 +95,7 @@ jobs:
         run: singularity build --fakeroot matrix-multiplication.sif singularity.def
 
       - name: Verify correct container execution
-        run: ./matrix-multiplication.sif
+        run: singularity exec matrix-multiplication.sif bash -c "mpirun -np 2 /prj/main"
 
       # https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts#passing-data-between-jobs-in-a-workflow
       - name: Upload SIF container
@@ -152,6 +152,7 @@ jobs:
         run: |
           sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:output.out .
           sshpass -f ./psw.txt rsync -PravzHS -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" $CLUSTER_SSH:errors.err .
+          sleep 15
       
       - name: Upload Output log
         uses: actions/upload-artifact@v4.3.3
