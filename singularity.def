@@ -2,26 +2,29 @@ Bootstrap: docker
 From: debian:bookworm-slim
 
 %files
-    ./include
-    ./lib
-    ./src
-    CMakeLists.txt
-    matrixA.txt
-    matrixB.txt
+    ./include /prj/include
+    ./lib /prj/lib
+    ./src /prj/src
+    ./googletest /prj/googletest
+    ./test /prj/test
+    CMakeLists.txt /prj/CMakeLists.txt
+    matrixA.txt /prj/matrixA.txt
+    matrixB.txt /prj/matrixB.txt
 
 %post
     apt-get update && 
     apt-get upgrade -y && 
     apt-get autoremove -y &&
     apt-get clean -y &&
-    apt-get -y install g++ cmake mpich &&
+    apt-get -y install g++ cmake libopenmpi-dev &&
     apt-get autoremove -y &&
     apt-get clean -y
-
-%runscript
+    cd prj
     mkdir -p build && cd build
     cmake ..
     cmake --build .
-    cp ../matrixA.txt .
-    cp ../matrixB.txt .
-    mpirun -np 2 ./main
+    cp main ..
+    cd ..
+
+%runscript
+    mpirun -np 2 /prj/main
