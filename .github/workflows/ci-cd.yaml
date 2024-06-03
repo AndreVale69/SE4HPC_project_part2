@@ -146,6 +146,7 @@ jobs:
   run-container-to-cluster:
     needs: upload-container-to-cluster
     runs-on: ubuntu-latest
+    steps:
       - name: Run job.sh on the cluster
         env:
           CLUSTER_SSH: ${{ secrets.CLUSTER_USERNAME }}@${{ secrets.CLUSTER_HOST }}
